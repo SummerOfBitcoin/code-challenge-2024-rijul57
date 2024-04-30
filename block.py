@@ -36,8 +36,9 @@ while(True):
     serial += int_to_little_endian_hex(int(time.time()))
     serial += "ffff001d"
     serial += int_to_little_endian_hex(nonce)
-    hash = int(hash256(serial), 16)
-    if(hash < TARGET):
+    hash = hash256(serial)
+    hash_little_endian = bytes.fromhex(hash)[::-1].hex()
+    if(int(hash_little_endian, 16) < TARGET):
         print(hash, nonce, serial)
         break
     nonce += 1
