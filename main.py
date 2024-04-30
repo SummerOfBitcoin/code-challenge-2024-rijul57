@@ -27,9 +27,7 @@ def generate_block():
             file.write(str(item) + "\n")
 
     coinbase_serialization = generate_coinbase_tx()
-    print(coinbase_serialization)
     block_header = make_block(coinbase_serialization)
-
     with open("output.txt", "w") as file:
         file.write(str(block_header) + "\n")
         file.write(str(coinbase_serialization) + "\n")
@@ -37,7 +35,7 @@ def generate_block():
         file.write(str(coinbase_serialization_little) + "\n")
         for filename in valid_tx:
             txid = get_txid(filename)
-            txid_little = bytes.fromhex(hash256(txid))[::-1].hex()
+            txid_little = bytes.fromhex(txid)[::-1].hex()
             file.write(str(txid_little) + "\n")
 
 
