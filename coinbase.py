@@ -34,7 +34,6 @@ def generate_coinbase_tx():
     wtxid_list = get_wtxid_list(COINBASE_WTXID)
     witness_root_hash = merkleroot(wtxid_list)
     witness_commitment = hash256(witness_root_hash + WITNESS_RESERVED_VALUE)
-
     serial += witness_commitment
     serial += "0120000000000000000000000000000000000000000000000000000000000000000000000000"
     return serial

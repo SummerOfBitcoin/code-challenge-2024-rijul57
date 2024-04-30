@@ -38,12 +38,6 @@ def bytes_to_compact_hex(bytes_data):
     
 TARGET =0x0000ffff00000000000000000000000000000000000000000000000000000000
 
-with open("coinbase_data.txt", "r") as file:
-    data = [line.strip() for line in file]
-
-with open("txid.txt", "r") as file:
-    tx_list = [line.strip() for line in file]
-
 def get_merkle_root(coinbase_serialization):
     with open("valid_tx.txt", "r") as file:
         valid_tx = [line.strip() for line in file]
@@ -55,7 +49,7 @@ def get_merkle_root(coinbase_serialization):
 
 def make_block(coinbase_serialization):
     nonce = 0
-    merkle_root = merkleroot(coinbase_serialization)
+    merkle_root = get_merkle_root(coinbase_serialization)
     while(True):
         header = "20000000"
         header += "0000000000000000000000000000000000000000000000000000000000000000"
