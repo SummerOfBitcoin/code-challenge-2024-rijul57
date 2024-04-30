@@ -19,10 +19,36 @@ def hash256(msg):
     hash = hashlib.sha256(hashlib.sha256(bytes.fromhex(msg)).digest()).digest()
     return hash.hex()
 
-def wtxid_legacy(filename):
+def wtxid_legacy(obj):
 
     """wtxid for legacy transactions is same as txid."""
-    return get_txid(filename)
+    serial = ""
+    if(str(obj['version']) == '1'):
+        serial += "01000000"
+    else:   
+        serial += "02000000"
+
+    serial += bytes_to_compact_hex(encode_varint(len(obj['vin'])))
+
+    for i in range(len(obj['vin'])):
+        tx = obj['vin'][i]
+        txid_little_endian = bytes.fromhex(tx['txid'])[::-1].hex()
+        serial += txid_little_endian
+        serial += tx['vout'].to_bytes(4, byteorder = 'little').hex()
+        serial += bytes_to_compact_hex(encode_varint(len(tx['scriptsig'])//2))
+        serial += tx['scriptsig']
+        serial += tx['sequence'].to_bytes(4, byteorder = 'little').hex()
+        
+    serial += bytes_to_compact_hex(encode_varint(len(obj['vout']) ))
+
+    for i in range(len(obj['vout'])):
+        tx = obj["vout"][i]
+        serial += tx['value'].to_bytes(8, byteorder = 'little').hex()
+        serial += bytes_to_compact_hex(encode_varint(len(tx['scriptpubkey'])//2))
+        serial += tx['scriptpubkey']
+        
+    serial += obj['locktime'].to_bytes(4, byteorder = 'little').hex()
+    return hash256(serial)
 
 def wtxid_segwit(obj):
     serial = ""
@@ -61,9 +87,8 @@ def wtxid_segwit(obj):
     serial += obj['locktime'].to_bytes(4, byteorder = 'little').hex()
     return hash256(serial)
 
-wtxid_list = []
-
 def get_wtxid():
+    wtxid_list = []
     with open("valid_tx.txt", "r") as file:
         valid_tx = [line.strip() for line in file]
 
@@ -77,7 +102,7 @@ def get_wtxid():
             isp2pkh=True
 
         if(isp2pkh):
-            hash = wtxid_legacy(filename)
+            hash = wtxid_legacy(obj)
         else:
             hash = wtxid_segwit(obj)
 

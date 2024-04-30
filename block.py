@@ -51,8 +51,7 @@ def make_block(coinbase_serialization):
     nonce = 0
     merkle_root = get_merkle_root(coinbase_serialization)
     while(True):
-        header = "20000000"
-        header += "0000000000000000000000000000000000000000000000000000000000000000"
+        header = "200000000000000000000000000000000000000000000000000000000000000000000000"
         header += merkle_root
         header += int_to_little_endian_hex(int(time.time()))
         header += "ffff001f"
