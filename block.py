@@ -45,13 +45,11 @@ def get_merkle_root(coinbase_serialization):
     for filename in valid_tx:
         txid = get_txid(filename)
         txid_list.append(txid)
-    print(txid_list)
     return merkleroot(txid_list)
 
 def make_block(coinbase_serialization):
     nonce = 0
     merkle_root = get_merkle_root(coinbase_serialization)
-    print(merkle_root)
     while(True):
         header = "200000000000000000000000000000000000000000000000000000000000000000000000"
         header += merkle_root
