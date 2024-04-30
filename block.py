@@ -52,7 +52,7 @@ while(True):
     serial = "200000000000000000000000000000000000000000000000000000000000000000000000"
     serial += merkle_root
     serial += int_to_little_endian_hex(int(time.time()))
-    serial += "ffff001d"
+    serial += "ffff001f"
     serial += int_to_little_endian_hex(nonce)
     hash = hash256(serial)
     hash_little_endian = bytes.fromhex(hash)[::-1].hex()
@@ -61,4 +61,3 @@ while(True):
             file.write(str(serial) + "\n")
         break
     nonce += 1
-
