@@ -27,7 +27,8 @@ Here, R and S are components of DER signature, Q is the public key, z is the mes
 
 ### get_data.py
 
-It contains the get_transaction_info function that serializes every transaction to calculate its message. 
+It contains the get_transaction_info function that serializes every transaction to calculate its message. It contains two functions get_p2pkh_info and get_p2wpkh_info depending on the nature of transaction (legacy/segwit). These functions implement the basic serialization step, components of which are used to compute txids as well as wtxids.
+They are also used to parse the signatures and public key values from the json transactioin object.
 
 ### merkle_root.py
 
