@@ -32,7 +32,11 @@ def encode_varint(value):
     else:
         return b'\xFF' + value.to_bytes(8, byteorder='little')
     
+def bytes_to_compact_hex(bytes_data):
+    return ''.join(format(byte, '02x') for byte in bytes_data)
+    
 TARGET =0x0000ffff00000000000000000000000000000000000000000000000000000000
+
 with open("coinbase_data.txt", "r") as file:
     data = [line.strip() for line in file]
 
@@ -43,9 +47,6 @@ coinbase_txid = hash256(data[0])
 mr_list = [coinbase_txid] + tx_list
 merkle_root = merkleroot(mr_list)
     
-def bytes_to_compact_hex(bytes_data):
-    return ''.join(format(byte, '02x') for byte in bytes_data)
-
 nonce = 0
 while(True):
     serial = "200000000000000000000000000000000000000000000000000000000000000000000000"
@@ -56,6 +57,8 @@ while(True):
     hash = hash256(serial)
     hash_little_endian = bytes.fromhex(hash)[::-1].hex()
     if(int(hash_little_endian, 16) < TARGET):
-        print(hash, nonce, serial)
+        with open("block_data.txt", "w") as file:
+            file.write(str(serial) + "\n")
         break
     nonce += 1
+
