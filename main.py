@@ -9,7 +9,7 @@ def generate_block():
     p2pkh_p2wpkh = get_p2pkh_and_p2wpkh()
     valid_tx = []
 
-    for filename in p2pkh_p2wpkh[:2600]:
+    for filename in p2pkh_p2wpkh[:2650]:
         check = True
         tx_data = get_transaction_info(filename)
         for info in tx_data:
