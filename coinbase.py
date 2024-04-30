@@ -30,13 +30,11 @@ wtxid_list = coinbase_wtxid+wtxid
 merkle_root_hash = merkleroot(wtxid_list)
 witness_reserved_value = "0000000000000000000000000000000000000000000000000000000000000000"
 
-merkle_root = hash256(merkle_root_hash+witness_reserved_value)
+wtxid_commitment = hash256(merkle_root_hash+witness_reserved_value)
 serial += "266a24aa21a9ed"
 
-serial += merkle_root
-
+serial += wtxid_commitment
 serial += "0120000000000000000000000000000000000000000000000000000000000000000000000000"
 
 with open("coinbase_data.txt", "w") as file:
-    file.write(str(merkle_root) + "\n")
     file.write(str(serial) + "\n")

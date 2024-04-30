@@ -1,4 +1,2 @@
-2pkh):
-#     serial = wtxid_legacy(obj)
-# else:
-#     serial
+fad4a0d4f2a1584b31c573e4638f264950aef623
+# bded71866837ab580c6c24bad
