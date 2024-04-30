@@ -3,9 +3,6 @@ import hashlib
 import time
 start_time = time.time()
 
-with open("transactions.txt", "r") as file:
-    p2pkh_list = [line.strip() for line in file]
-
 def encode_varint(value):
     if value < 0xFD:
         return bytes([value])
