@@ -27,7 +27,7 @@ Here, R and S are components of DER signature, Q is the public key, z is the mes
 
 ### get_data.py
 
-It contains the get_transaction_info function that serializes every transaction to calculate its message
+It contains the get_transaction_info function that serializes every transaction to calculate its message. 
 
 ### merkle_root.py
 
