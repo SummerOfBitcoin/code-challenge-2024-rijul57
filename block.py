@@ -46,7 +46,7 @@ with open("txid.txt", "r") as file:
 coinbase_txid = hash256(data[0])
 mr_list = [coinbase_txid] + tx_list
 merkle_root = merkleroot(mr_list)
-    
+
 nonce = 0
 while(True):
     serial = "200000000000000000000000000000000000000000000000000000000000000000000000"
