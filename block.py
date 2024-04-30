@@ -7,7 +7,7 @@ def hash256(msg):
 def int_to_little_endian_hex(num):
     return num.to_bytes(4, byteorder='little').hex()
 
-Target =0x0000ffff00000000000000000000000000000000000000000000000000000000
+TARGET =0x0000ffff00000000000000000000000000000000000000000000000000000000
 with open("coinbase_data.txt", "r") as file:
     data = [line.strip() for line in file]
 
@@ -29,17 +29,16 @@ merkle_root = data[0]
 coinbase_tx = data[1]
 
 nonce = 0
-# while(True):
-#     serial = "010000000000000000000000000000000000000000000000000000000000000000000000"
-#     serial += merkle_root
-#     serial += int_to_little_endian_hex(int(time.time()))
-#     serial += "ffff001d"
-#     serial += int_to_little_endian_hex(nonce)
-#     serial += bytes_to_compact_hex(encode_varint(2669))
-#     hash = int(hash256(serial), 16)
-#     if(hash < Target):
-#         print(hash, nonce, serial)
-#         break
-#     nonce+=1
+i = 0
+while(True):
+    serial = "200000000000000000000000000000000000000000000000000000000000000000000000"
+    serial += merkle_root
+    serial += int_to_little_endian_hex(int(time.time()))
+    serial += "ffff001d"
+    serial += int_to_little_endian_hex(nonce)
+    hash = int(hash256(serial), 16)
+    if(hash < TARGET):
+        print(hash, nonce, serial)
+        break
+    nonce += 1
 
-print(coinbase_tx)
