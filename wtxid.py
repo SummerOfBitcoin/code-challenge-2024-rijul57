@@ -1,8 +1,6 @@
 import json
 import hashlib
-
-with open("valid_tx.txt", "r") as file:
-    valid_tx = [line.strip() for line in file]
+from txid import get_txid
 
 def encode_varint(value):
     if value < 0xFD:
@@ -21,34 +19,10 @@ def hash256(msg):
     hash = hashlib.sha256(hashlib.sha256(bytes.fromhex(msg)).digest()).digest()
     return hash.hex()
 
-def wtxid_legacy(obj):
-    serial = ""
-    if(str(obj['version']) == '1'):
-        serial += "01000000"
-    else:   
-        serial += "02000000"
+def wtxid_legacy(filename):
 
-    serial += bytes_to_compact_hex(encode_varint(len(obj['vin'])))
-
-    for i in range(len(obj['vin'])):
-        tx = obj['vin'][i]
-        txid_little_endian = bytes.fromhex(tx['txid'])[::-1].hex()
-        serial += txid_little_endian
-        serial += tx['vout'].to_bytes(4, byteorder = 'little').hex()
-        serial += bytes_to_compact_hex(encode_varint(len(tx['scriptsig'])//2))
-        serial += tx['scriptsig']
-        serial += tx['sequence'].to_bytes(4, byteorder = 'little').hex()
-        
-    serial += bytes_to_compact_hex(encode_varint(len(obj['vout']) ))
-
-    for i in range(len(obj['vout'])):
-        tx = obj["vout"][i]
-        serial += tx['value'].to_bytes(8, byteorder = 'little').hex()
-        serial += bytes_to_compact_hex(encode_varint(len(tx['scriptpubkey'])//2))
-        serial += tx['scriptpubkey']
-        
-    serial += obj['locktime'].to_bytes(4, byteorder = 'little').hex()
-    return hash256(serial)
+    """wtxid for legacy transactions is same as txid."""
+    return get_txid(filename)
 
 def wtxid_segwit(obj):
     serial = ""
@@ -89,22 +63,24 @@ def wtxid_segwit(obj):
 
 wtxid_list = []
 
-for filename in valid_tx:
-    file = open(f'code-challenge-2024-rijul57/mempool/{filename}', 'r')                                                                                                    
-    data = file.read()
-    obj = json.loads(data)
+def get_wtxid():
+    with open("valid_tx.txt", "r") as file:
+        valid_tx = [line.strip() for line in file]
 
-    isp2pkh = False
-    if(obj['vin'][0]['prevout']['scriptpubkey_type'] == 'p2pkh'):
-        isp2pkh=True
+    for filename in valid_tx:
+        file = open(f'mempool/{filename}', 'r')                                                                                                    
+        data = file.read()
+        obj = json.loads(data)
 
-    if(isp2pkh):
-        hash = wtxid_legacy(obj)
-    else:
-        hash = wtxid_segwit(obj)
+        isp2pkh = False
+        if(obj['vin'][0]['prevout']['scriptpubkey_type'] == 'p2pkh'):
+            isp2pkh=True
 
-    wtxid_list.append(hash)
+        if(isp2pkh):
+            hash = wtxid_legacy(filename)
+        else:
+            hash = wtxid_segwit(obj)
 
-with open("wtxid.txt", "w") as file:
-    for item in wtxid_list:
-        file.write(str(item) + "\n")
+        wtxid_list.append(hash)
+
+    return wtxid_list

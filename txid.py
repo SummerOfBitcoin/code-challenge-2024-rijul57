@@ -1,9 +1,6 @@
 import json
 import hashlib
 
-with open("valid_tx.txt", "r") as file:
-    valid_tx_list = [line.strip() for line in file]
-
 def encode_varint(value):
     if value < 0xFD:
         return bytes([value])
@@ -21,10 +18,8 @@ def hash256(msg):
     hash = hashlib.sha256(hashlib.sha256(bytes.fromhex(msg)).digest()).digest()
     return hash.hex()
 
-txid_list = []
-
-for filename in valid_tx_list:
-    file = open(f'code-challenge-2024-rijul57/mempool/{filename}', 'r')                                                                                                    
+def get_txid(filename):
+    file = open(f'mempool/{filename}', 'r')                                                                                                    
     data = file.read()
     obj = json.loads(data)
     serial = ""
@@ -53,10 +48,6 @@ for filename in valid_tx_list:
         serial += tx['scriptpubkey']
         
     serial += obj['locktime'].to_bytes(4, byteorder = 'little').hex()
-    txid_list.append(hash256(serial))
-
-with open("txid.txt", "w") as file:
-    for item in txid_list:
-        file.write(str(item) + "\n")
+    return hash256(serial)
 
 

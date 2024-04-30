@@ -1,5 +1,6 @@
 import time
 import hashlib
+from txid import get_txid
 
 def hash256(msg):
     hashp = hashlib.sha256(hashlib.sha256(bytes.fromhex(msg)).digest()).digest()
@@ -43,21 +44,27 @@ with open("coinbase_data.txt", "r") as file:
 with open("txid.txt", "r") as file:
     tx_list = [line.strip() for line in file]
 
-coinbase_txid = hash256(data[0])
-mr_list = [coinbase_txid] + tx_list
-merkle_root = merkleroot(mr_list)
+def get_merkle_root(coinbase_serialization):
+    with open("valid_tx.txt", "r") as file:
+        valid_tx = [line.strip() for line in file]
+    txid_list = [hash256(coinbase_serialization)]
+    for filename in valid_tx:
+        txid = get_txid(filename)
+        txid_list.append(txid)
+    return merkleroot(txid_list)
 
-nonce = 0
-while(True):
-    serial = "200000000000000000000000000000000000000000000000000000000000000000000000"
-    serial += merkle_root
-    serial += int_to_little_endian_hex(int(time.time()))
-    serial += "ffff001f"
-    serial += int_to_little_endian_hex(nonce)
-    hash = hash256(serial)
-    hash_little_endian = bytes.fromhex(hash)[::-1].hex()
-    if(int(hash_little_endian, 16) < TARGET):
-        with open("block_data.txt", "w") as file:
-            file.write(str(serial) + "\n")
-        break
-    nonce += 1
+def make_block(coinbase_serialization):
+    nonce = 0
+    merkle_root = merkleroot(coinbase_serialization)
+    while(True):
+        header = "20000000"
+        header += "0000000000000000000000000000000000000000000000000000000000000000"
+        header += merkle_root
+        header += int_to_little_endian_hex(int(time.time()))
+        header += "ffff001f"
+        header += int_to_little_endian_hex(nonce)
+        hash = hash256(header)
+        hash_little_endian = bytes.fromhex(hash)[::-1].hex()
+        if(int(hash_little_endian, 16) < TARGET):
+            return header
+        nonce += 1

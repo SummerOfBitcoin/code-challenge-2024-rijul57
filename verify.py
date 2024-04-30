@@ -1,18 +1,3 @@
-from pycoin.ecdsa import generator_secp256k1, verify
-import time
-import ast
-
-start_time = time.time()
-
-with open("tx_data.txt", "r") as file:
-    lines = file.readlines()
-
-tx_data = []
-
-for line in lines:
-    sublist = ast.literal_eval(line)
-    tx_data.append(sublist)
-   
 # Value of constants
 p = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F
 G = (55066263022277343669578718895168534326250603453777594175500187360389116729240,32670510020758816978083085130507043184471273380659243275938904335757337482424)
@@ -106,26 +91,3 @@ def decodepk(pk):
         y = p - y
     return (x, y)
 
-valid_tx = []
-
-ct = 0
-for i in range(len(tx_data)):
-    check = True
-    for j in range(1, len(tx_data[i])):
-      msghash = int(tx_data[i][j][0], 16)
-      st = decodesig(tx_data[i][j][1])
-      pkt = decodepk(tx_data[i][j][2])
-      isvalid = verify(pkt, st, msghash)
-      if(isvalid == False):
-        check = False
-        break
-    if(check):
-        ct += 1
-        valid_tx.append(tx_data[i][0])
-
-print(ct)
-with open("valid_tx.txt", "w") as file:
-    for item in valid_tx:
-        file.write(str(item) + "\n")
-        
-print("--- %s seconds ---" % (time.time() - start_time))
