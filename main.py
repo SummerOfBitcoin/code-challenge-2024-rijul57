@@ -27,6 +27,7 @@ def generate_block():
             file.write(str(item) + "\n")
 
     coinbase_serialization = generate_coinbase_tx()
+    print(coinbase_serialization)
     block_header = make_block(coinbase_serialization)
 
     with open("output.txt", "w") as file:
