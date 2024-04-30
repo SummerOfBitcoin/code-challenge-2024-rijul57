@@ -21,7 +21,8 @@ with open("txid.txt", "r") as file:
 with open("output.txt", "w") as file:
     file.write(str(block_data) + "\n")
     file.write(str(coinbase_txid) + "\n")
-    file.write(hash256(coinbase_txid) + "\n")
+    coinbase_txid_little_endian = bytes.fromhex(coinbase_txid)[::-1].hex()
+    file.write(hash256(coinbase_txid_little_endian) + "\n")
     for txid in tx_list:
         txid_little_endian = bytes.fromhex(txid)[::-1].hex()
         file.write(str(txid_little_endian) + "\n")
